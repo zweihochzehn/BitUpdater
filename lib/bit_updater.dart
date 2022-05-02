@@ -24,7 +24,15 @@ class BitUpdater {
   String? contentText;
   String? forceUpdateContentText;
   String? checkBoxText;
-  final double? elevation;
+  ShapeBorder? dialogShape;
+  AlignmentGeometry? dialogAlignment;
+  Color? dialogBackgroundColor;
+  Color? dialogTextColor;
+  double? dialogElevation;
+  Clip? dialogClipBehavior;
+  Curve? dialogInsetAnimationCurve;
+  Duration? dialogInsetAnimationDuration;
+  EdgeInsets? dialogInsetPadding;
 
   BitUpdater({
     required this.context,
@@ -32,14 +40,23 @@ class BitUpdater {
     this.confirmText = "Upgrade",
     this.cancelText = "Skip",
     this.titleText = "Update Available!",
-    this.contentText = "Please update to take advantage of the latest features and bug fixes!",
-    this.forceUpdateContentText = "This is a major update. If you want to continue using the app, please update!",
+    this.contentText =
+        "Please update to take advantage of the latest features and bug fixes!",
+    this.forceUpdateContentText =
+        "This is a major update. If you want to continue using the app, please update!",
     this.checkBoxText = "dismiss until next available version",
-    this.elevation,
+    this.dialogShape,
+    this.dialogAlignment,
+    this.dialogBackgroundColor,
+    this.dialogTextColor,
+    this.dialogElevation,
+    this.dialogClipBehavior,
+    this.dialogInsetAnimationCurve,
+    this.dialogInsetAnimationDuration,
+    this.dialogInsetPadding,
   });
 
   Future<bool> checkServerForUpdate() async {
-
     bool isUpdateAvailable = await bitUpdaterGetIt<BitUpdaterService>()
         .checkServerUpdate(url, context);
     bool allowSkip = bitUpdaterGetIt<BitUpdaterCubit>().allowSkip;
@@ -58,6 +75,15 @@ class BitUpdater {
           cancelButtonText: cancelText!,
           downloadUrl: url,
           checkBoxText: checkBoxText!,
+          dialogAlignment: dialogAlignment,
+          dialogBackgroundColor: dialogBackgroundColor,
+          dialogTextColor: dialogTextColor,
+          dialogShape: dialogShape,
+          dialogElevation: dialogElevation,
+          dialogClipBehavior: dialogClipBehavior,
+          dialogInsetAnimationCurve: dialogInsetAnimationCurve,
+          dialogInsetAnimationDuration: dialogInsetAnimationDuration,
+          dialogInsetPadding: dialogInsetPadding,
         );
       }
 

@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:math';
 
 class BitUpdaterDialog extends StatefulWidget {
-  const BitUpdaterDialog({
+  BitUpdaterDialog({
     Key? key,
     required this.context,
     required this.titleText,
@@ -17,6 +17,15 @@ class BitUpdaterDialog extends StatefulWidget {
     required this.confirmButtonText,
     required this.cancelButtonText,
     required this.downloadUrl,
+    this.dialogShape,
+    this.dialogAlignment,
+    this.dialogBackgroundColor,
+    this.dialogTextColor,
+    this.dialogElevation,
+    this.dialogClipBehavior,
+    this.dialogInsetAnimationCurve,
+    this.dialogInsetAnimationDuration,
+    this.dialogInsetPadding,
   }) : super(key: key);
 
   final BuildContext context;
@@ -26,6 +35,15 @@ class BitUpdaterDialog extends StatefulWidget {
   final String confirmButtonText;
   final String cancelButtonText;
   final String downloadUrl;
+  ShapeBorder? dialogShape;
+  AlignmentGeometry? dialogAlignment;
+  Color? dialogBackgroundColor;
+  Color? dialogTextColor;
+  double? dialogElevation;
+  Clip? dialogClipBehavior;
+  Curve? dialogInsetAnimationCurve;
+  Duration? dialogInsetAnimationDuration;
+  EdgeInsets? dialogInsetPadding;
 
   @override
   State<BitUpdaterDialog> createState() => _BitUpdaterDialogState();
@@ -39,12 +57,12 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
   bool _changeDialog = false;
   var token = CancelToken();
 
-  bool isCheckBoxAvailable = bitUpdaterGetIt<BitUpdaterCubit>()
-      .isCheckBoxAvailable;
+  bool isCheckBoxAvailable =
+      bitUpdaterGetIt<BitUpdaterCubit>().isCheckBoxAvailable;
   bool checkBoxValue = false;
   bool allowSkip = bitUpdaterGetIt<BitUpdaterCubit>().allowSkip;
-  bool isUserDismissedNonForcedUpdates = bitUpdaterGetIt<BitUpdaterCubit>()
-      .isUserDismissedNonForcedUpdates;
+  bool isUserDismissedNonForcedUpdates =
+      bitUpdaterGetIt<BitUpdaterCubit>().isUserDismissedNonForcedUpdates;
 
   @override
   void dispose() {
@@ -58,8 +76,17 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-          child: _changeDialog ? _downloadContent() : _updateContent(),
-        );
+      shape: widget.dialogShape,
+      alignment: widget.dialogAlignment,
+      backgroundColor: widget.dialogBackgroundColor,
+      elevation: widget.dialogElevation,
+      clipBehavior: widget.dialogClipBehavior ?? Clip.none,
+      insetAnimationCurve: widget.dialogInsetAnimationCurve ?? Curves.easeIn,
+      insetAnimationDuration: widget.dialogInsetAnimationDuration ??
+          const Duration(milliseconds: 100),
+      insetPadding: widget.dialogInsetPadding,
+      child: _changeDialog ? _downloadContent() : _updateContent(),
+    );
   }
 
   Widget _updateContent() {
@@ -72,7 +99,8 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
             child: Text(
               widget.titleText,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
+                color: widget.dialogTextColor,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -87,6 +115,7 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
             child: Text(
               widget.contentText,
               textAlign: TextAlign.center,
+              style: TextStyle(color: widget.dialogTextColor),
             ),
             alignment: Alignment.center,
           ),
@@ -105,7 +134,10 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                   bitUpdaterGetIt<BitUpdaterService>().downloadApp();
                 },
                 icon: const Icon(Icons.upgrade),
-                label: Text(widget.confirmButtonText),
+                label: Text(
+                  widget.confirmButtonText,
+                  style: TextStyle(color: widget.dialogTextColor),
+                ),
               ),
               if (allowSkip)
                 OutlinedButton.icon(
@@ -113,7 +145,10 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                     _dismiss();
                   },
                   icon: const Icon(Icons.cancel),
-                  label: Text(widget.cancelButtonText),
+                  label: Text(
+                    widget.cancelButtonText,
+                    style: TextStyle(color: widget.dialogTextColor),
+                  ),
                 ),
             ],
           ),
@@ -131,7 +166,7 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
           progress = state.current / state.total;
           progressPercent = "${percent.toStringAsFixed(2)} %";
           progressSize =
-          '${_formatBytes(state.current, 1)} / ${_formatBytes(state.total, 1)}';
+              '${_formatBytes(state.current, 1)} / ${_formatBytes(state.total, 1)}';
 
           if (state.current == state.total) {
             _dismiss();
@@ -143,9 +178,10 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Downloading...',
                 style: TextStyle(
+                  color: widget.dialogTextColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
@@ -158,13 +194,17 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                 children: [
                   Text(
                     progressSize,
-                    style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: widget.dialogTextColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold),
                   ),
                   Text(
                     progressPercent,
-                    style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: widget.dialogTextColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -175,7 +215,7 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                       value: progress == 0.0 ? null : progress,
                       //backgroundColor: Colors.grey,
                       valueColor:
-                      const AlwaysStoppedAnimation<Color>(Colors.black),
+                          const AlwaysStoppedAnimation<Color>(Colors.black),
                     ),
                   ),
                   IconButton(
@@ -202,10 +242,15 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
   }
 
   Widget _buildCheckBox() {
-    return Row(mainAxisAlignment: MainAxisAlignment.center,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(widget.checkBoxText),
+        Text(
+          widget.checkBoxText,
+          style: TextStyle(color: widget.dialogTextColor),
+        ),
         Checkbox(
+          side: BorderSide(color: widget.dialogTextColor ?? Colors.black),
           value: checkBoxValue,
           onChanged: (bool? value) {
             setState(() {

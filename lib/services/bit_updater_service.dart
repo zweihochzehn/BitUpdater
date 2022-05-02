@@ -27,7 +27,7 @@ class BitUpdaterService {
     String _endpoint = Platform.isAndroid ? "android" : "ios";
     var response = await http.get(Uri.parse(url + _endpoint), headers: {"Accept": "application/json", "Content-Type": "application/json"});
 
-    /// Make sure that the server versioning includes major minor and patch versioning as 3.0.0
+    ///TODO: Make sure that the server versioning includes major minor and patch versioning as 3.0.0
     serverVersion = ServerVersionModel.fromJson(jsonDecode(response.body));
   }
 

@@ -10,7 +10,6 @@ class BitUpdaterInitial extends BitUpdaterState {
   List<Object> get props => [currentStatus];
 }
 
-/// Whenever a new event is triggered
 class UpdateStatusState extends BitUpdaterState {
   final UpdateStatus currentStatus;
 
@@ -19,20 +18,17 @@ class UpdateStatusState extends BitUpdaterState {
   @override
   List<Object?> get props => [currentStatus];
 }
-/// Whenever the user checks the checkbox, it disallows the non-forced updates so no update is shows until a forced one.
-/// This value is saved in the sharedPrefs.
-/// When BitUpdater is run, it checks the saved value and dismisses the update if there is no forced update.
 
 class UpdateDialogParameterState extends BitUpdaterState {
   final bool isUpdateAvailable;
   final bool allowSkip;
-  final bool isNonForcedUpdateAllowed;
+  final int dismissedVersion;
   final bool isCheckBoxAvailable;
 
-  const UpdateDialogParameterState(this.isUpdateAvailable, this.allowSkip, this.isNonForcedUpdateAllowed, this.isCheckBoxAvailable);
+  const UpdateDialogParameterState(this.isUpdateAvailable, this.allowSkip, this.dismissedVersion, this.isCheckBoxAvailable);
 
   @override
-  List<Object?> get props => [isUpdateAvailable, allowSkip, isNonForcedUpdateAllowed];
+  List<Object?> get props => [isUpdateAvailable, allowSkip, dismissedVersion, isCheckBoxAvailable];
 }
 
 class LoadingState extends BitUpdaterState {
@@ -40,7 +36,6 @@ class LoadingState extends BitUpdaterState {
   List<Object?> get props => [];
 }
 
-/// Updates the progress of the download
 class DownloadProgressState extends BitUpdaterState {
   final int current;
   final int total;
@@ -50,7 +45,7 @@ class DownloadProgressState extends BitUpdaterState {
   @override
   List<Object?> get props => [current, total];
 }
-/// When there is an error
+
 class OnErrorState extends BitUpdaterState {
   final Object error;
 

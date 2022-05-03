@@ -61,8 +61,7 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
       bitUpdaterGetIt<BitUpdaterCubit>().isCheckBoxAvailable;
   bool checkBoxValue = false;
   bool allowSkip = bitUpdaterGetIt<BitUpdaterCubit>().allowSkip;
-  bool isUserDismissedNonForcedUpdates =
-      bitUpdaterGetIt<BitUpdaterCubit>().isUserDismissedNonForcedUpdates;
+  int latestVersion = bitUpdaterGetIt<BitUpdaterCubit>().latestVersion;
 
   @override
   void dispose() {
@@ -253,10 +252,11 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
           side: BorderSide(color: widget.dialogTextColor ?? Colors.black),
           value: checkBoxValue,
           onChanged: (bool? value) {
+
             setState(() {
               checkBoxValue = value!;
             });
-            bitUpdaterGetIt<BitUpdaterCubit>().setNonForcedUpdateStatus(value!);
+            bitUpdaterGetIt<BitUpdaterCubit>().setDismissedVersion(value! ? latestVersion : 0);
           },
         ),
       ],

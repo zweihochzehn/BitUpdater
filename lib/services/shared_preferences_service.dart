@@ -19,11 +19,19 @@ class SharedPreferencesService {
     await sharedPrefs.remove(key);
   }
 
-  Future<void> setNonForcedUpdateAllowed(bool isAllowed) async {
-    _setBool("isNonForcedUpdateAllowed", isAllowed);
+  Future<void> _setInt(String key, int value) async {
+    await sharedPrefs.setInt(key, value);
   }
 
-  bool getNonForcedUpdateAllowed() {
-    return _getBool("isNonForcedUpdateAllowed");
+  int _getInt(String key) {
+    return sharedPrefs.getInt(key) ?? 0;
+  }
+
+  Future<void> setDismissedVersion(int value) async {
+    await _setInt("dismissedVersion", value);
+  }
+
+  int getDismissedVersion() {
+    return _getInt("dismissedVersion");
   }
 }

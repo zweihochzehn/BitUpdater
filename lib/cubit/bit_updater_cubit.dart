@@ -11,9 +11,10 @@ part 'bit_updater_state.dart';
 class BitUpdaterCubit extends Cubit<BitUpdaterState> {
   BitUpdaterCubit() : super(BitUpdaterInitial());
 
-  UpdateStatus updateStatus  = UpdateStatus.pending;
+  UpdateStatus updateStatus = UpdateStatus.pending;
   bool isUpdateAvailable = false;
-  bool isUserDismissedNonForcedUpdates = false;
+  int dismissedVersion = 0;
+  int latestVersion = 0;
   bool allowSkip = false;
   bool isCheckBoxAvailable = false;
 
@@ -21,31 +22,42 @@ class BitUpdaterCubit extends Cubit<BitUpdaterState> {
     isUpdateAvailable = false;
     allowSkip = false;
     isCheckBoxAvailable = false;
-    isUserDismissedNonForcedUpdates = false;
+    dismissedVersion = 0;
   }
 
-  void setNonForcedUpdateStatus(bool isUserDismissed) {
-    isUserDismissedNonForcedUpdates = isUserDismissed;
-    bitUpdaterGetIt<SharedPreferencesService>().setNonForcedUpdateAllowed(isUserDismissed);
+  void setDismissedVersion(int dismissedVersion) {
+    dismissedVersion = dismissedVersion;
+    bitUpdaterGetIt<SharedPreferencesService>().setDismissedVersion(
+        dismissedVersion);
   }
 
-  void setupUpdateDialogParameters(bool updateAvailability, bool isSkipAllowed, bool checkBoxAvailability) {
+  void getDismissedVersionFromShared() {
+    dismissedVersion =
+        bitUpdaterGetIt<SharedPreferencesService>().getDismissedVersion();
+  }
+  /// If the checkbox is ticked, we save this value to sharedPrefs.
+  void setLatestVersion(int version) {
+    latestVersion = version;
+  }
+  /// After the update check is complete, the values are saves with this and used by the Dialog afterwards.
+  void setupUpdateDialogParameters(bool updateAvailability, bool isSkipAllowed,
+      bool checkBoxAvailability) {
     emit(LoadingState());
     isUpdateAvailable = updateAvailability;
     allowSkip = isSkipAllowed;
     isCheckBoxAvailable = checkBoxAvailability;
-    isUserDismissedNonForcedUpdates = bitUpdaterGetIt<SharedPreferencesService>().getNonForcedUpdateAllowed();
 
-    emit(UpdateDialogParameterState(isUpdateAvailable, allowSkip, isUserDismissedNonForcedUpdates, isCheckBoxAvailable));
+    emit(UpdateDialogParameterState(
+        isUpdateAvailable, allowSkip, dismissedVersion, isCheckBoxAvailable));
   }
-
+  /// Follows the update status for debug purposes.
   void changeUpdateStatus(UpdateStatus currentUpdateStatus) {
     emit(LoadingState());
     updateStatus = currentUpdateStatus;
     debugPrint(updateStatus.toString());
     emit(UpdateStatusState(updateStatus));
   }
-
+  /// Updates the download progress indicator.
   void updateDownloadProgress(int current, int total) {
     emit(LoadingState());
     emit(DownloadProgressState(current, total));

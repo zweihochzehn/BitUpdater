@@ -15,6 +15,9 @@ App needs to be initialized on app startup with BitUpdaterInit().
 ## Usage
 
 Just call BitUpdater() with required and optional parameters and you are done.
+BitUpdater().checkServerForUpdateAndShowDialog() if you want to show an update dialog.
+If you need the flexibility then just call BitUpdater().checkServerForUpdate() which returns an UpdateModel
+object that has all the info you need, to build your own widgets.
 
 ## Configuration
 

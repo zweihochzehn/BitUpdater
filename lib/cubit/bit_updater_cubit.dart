@@ -20,12 +20,18 @@ class BitUpdaterCubit extends Cubit<BitUpdaterState> {
   bool isCheckBoxAvailable = false;
   String downloadUrl = "";
   UpdateModel updateModel = UpdateModel(isUpdateAvailable: false);
+  FlutterError? error;
 
   void disposeBitUpdater() {
     isUpdateAvailable = false;
+    dismissedVersion = 0;
+    latestVersion = 0;
     allowSkip = false;
     isCheckBoxAvailable = false;
+    downloadUrl = "";
     dismissedVersion = 0;
+    updateModel = UpdateModel(isUpdateAvailable: false);
+    error = null;
   }
 
   void setDismissedVersion(int dismissedVersion) {
@@ -75,9 +81,10 @@ class BitUpdaterCubit extends Cubit<BitUpdaterState> {
     emit(DownloadProgressState(current, total));
   }
 
-  void setError(Object error) {
+  void setError(Object flutterError) {
     emit(LoadingState());
-    emit(OnErrorState(error));
+    error = flutterError as FlutterError;
+    emit(OnErrorState(flutterError));
   }
 }
 

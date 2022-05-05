@@ -6,6 +6,7 @@ import 'package:bit_updater/services/locator_service.dart';
 import 'package:bit_updater/services/shared_preferences_service.dart';
 import 'package:bit_updater/widgets/bit_updater_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'const/enums.dart';
 import 'cubit/bit_updater_cubit.dart';
@@ -42,9 +43,9 @@ class BitUpdater {
     this.cancelText = "Skip",
     this.titleText = "Update Available!",
     this.contentText =
-        "Please update to take advantage of the latest features and bug fixes!",
+    "Please update to take advantage of the latest features and bug fixes!",
     this.forceUpdateContentText =
-        "This is a major update. If you want to continue using the app, please update!",
+    "This is a major update. If you want to continue using the app, please update!",
     this.checkBoxText = "dismiss until next available version",
     this.dialogShape,
     this.dialogAlignment,
@@ -61,8 +62,9 @@ class BitUpdater {
     bool isUpdateAvailable = await bitUpdaterGetIt<BitUpdaterService>()
         .checkServerUpdate(url, context);
     bool allowSkip = bitUpdaterGetIt<BitUpdaterCubit>().allowSkip;
+    FlutterError? error = bitUpdaterGetIt<BitUpdaterCubit>().error;
 
-    if (isUpdateAvailable) {
+    if (isUpdateAvailable && error == null) {
       bool _dismissOnTouchOutside = true;
       Future<bool> _onWillPop() async =>
           allowSkip ? _dismissOnTouchOutside : allowSkip;
@@ -92,7 +94,10 @@ class BitUpdater {
           context: context,
           barrierDismissible: allowSkip,
           builder: (_) {
-            return WillPopScope(onWillPop: _onWillPop, child: _buildDialogUI());
+            return WillPopScope(
+              onWillPop: _onWillPop,
+              child: _buildDialogUI(),
+            );
           }).then((value) {
         if (value == null) {
           bitUpdaterGetIt<BitUpdaterCubit>()
@@ -102,8 +107,28 @@ class BitUpdater {
 
       return true;
     } else {
+      if (error != null) {
+        showDialog(context: context, barrierDismissible: true, builder: (_) {
+          return _buildErrorDialog(error.message);
+        }).then((value) {
+          if (value == null) {
+            bitUpdaterGetIt<BitUpdaterCubit>().disposeBitUpdater();
+            bitUpdaterGetIt<BitUpdaterCubit>()
+                .changeUpdateStatus(UpdateStatus.dialogDismissed);
+          }
+        });
+      }
       return false;
     }
+  }
+
+  Widget _buildErrorDialog(String errorMessage) {
+    return Dialog(
+      child: Text(
+        errorMessage,
+        textAlign: TextAlign.center,
+      ),
+    );
   }
 
   Future<UpdateModel> checkServerForUpdate() async {

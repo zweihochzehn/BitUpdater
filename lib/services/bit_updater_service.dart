@@ -30,7 +30,14 @@ class BitUpdaterService {
     });
 
     ///TODO: Make sure that the server versioning includes major minor and patch versioning as 3.0.0
+
     serverVersion = ServerVersionModel.fromJson(jsonDecode(response.body));
+    // RegExp versioningPattern = RegExp(r"\d\.\d\.\d");
+    // if (versioningPattern.hasMatch(serverVersion.minVersion) &&
+    //     versioningPattern.hasMatch(serverVersion.latestVersion)) {
+    //   throw FlutterError("Wrong versioning info from server. \n"
+    //       "Versioning does not match. Make sure versioning is formatted with MAJOR, MINOR and PATCH. Exp: 3.0.0");
+    // }
   }
 
   /// Get device info from packageInfo package and create a DeviceVersionModel object.
@@ -85,7 +92,9 @@ class BitUpdaterService {
     bitUpdaterGetIt<BitUpdaterCubit>()
         .changeUpdateStatus(UpdateStatus.checking);
     bitUpdaterGetIt<BitUpdaterCubit>().getDismissedVersionFromShared();
+
     await getServerVersionInfo(url);
+
     await getDeviceVersionInfo();
     bitUpdaterGetIt<BitUpdaterCubit>().setDownloadUrl(serverVersion.updateUrl);
 
@@ -94,47 +103,54 @@ class BitUpdaterService {
     int dismissedVersion = bitUpdaterGetIt<BitUpdaterCubit>().dismissedVersion;
     bool _isUpdateAvailable = false;
 
-    int minSupportVersion =
-        int.parse(serverVersion.minVersion.replaceAll(".", ""));
-    int latestVersion =
-        int.parse(serverVersion.latestVersion.replaceAll(".", ""));
-    int deviceBuildVersion =
-        int.parse(deviceVersion.version.replaceAll(".", ""));
+    try {
+      int minSupportVersion =
+          int.parse(serverVersion.minVersion.replaceAll(".", ""));
+      int latestVersion =
+          int.parse(serverVersion.latestVersion.replaceAll(".", ""));
+      int deviceBuildVersion =
+          int.parse(deviceVersion.version.replaceAll(".", ""));
 
-    /// If the dismiss checkbox ticked in dialog, this value is saved to shared.
-    bitUpdaterGetIt<BitUpdaterCubit>().setLatestVersion(latestVersion);
+      /// If the dismiss checkbox ticked in dialog, this value is saved to shared.
+      bitUpdaterGetIt<BitUpdaterCubit>().setLatestVersion(latestVersion);
 
-    if (minSupportVersion > deviceBuildVersion) {
-      ///Force update
-      checkBoxAvailable = false;
-      allowSkip = false;
-      _isUpdateAvailable = true;
-    } else if (deviceBuildVersion < latestVersion &&
-        dismissedVersion != latestVersion) {
-      checkBoxAvailable = true;
-      allowSkip = true;
-      _isUpdateAvailable = true;
-    } else {
-      _isUpdateAvailable = false;
+      if (minSupportVersion > deviceBuildVersion) {
+        ///Force update
+        checkBoxAvailable = false;
+        allowSkip = false;
+        _isUpdateAvailable = true;
+      } else if (deviceBuildVersion < latestVersion &&
+          dismissedVersion != latestVersion) {
+        checkBoxAvailable = true;
+        allowSkip = true;
+        _isUpdateAvailable = true;
+      } else {
+        _isUpdateAvailable = false;
+      }
+
+      bitUpdaterGetIt<BitUpdaterCubit>().setUpdateModel(UpdateModel(
+        isUpdateAvailable: _isUpdateAvailable,
+        isUpdateForced: minSupportVersion > deviceBuildVersion,
+        platform: serverVersion.platform,
+        minSupportVersion: serverVersion.minVersion,
+        latestVersion: serverVersion.latestVersion,
+        deviceVersion: deviceVersion.version,
+        downloadUrl: serverVersion.updateUrl,
+      ));
+
+      bitUpdaterGetIt<BitUpdaterCubit>().setupUpdateDialogParameters(
+          _isUpdateAvailable, allowSkip, checkBoxAvailable);
+      bitUpdaterGetIt<BitUpdaterCubit>().changeUpdateStatus(
+          dismissedVersion == latestVersion
+              ? UpdateStatus.availableButDismissed
+              : UpdateStatus.available);
+
+      return dismissedVersion == latestVersion ? false : _isUpdateAvailable;
+    } catch (error) {
+      bitUpdaterGetIt<BitUpdaterCubit>().setError(FlutterError(
+          "Wrong versioning info from server. \n"
+          "Versioning does not match. Make sure versioning is formatted with MAJOR, MINOR and PATCH. Exp: 3.0.0"));
+      return false;
     }
-
-    bitUpdaterGetIt<BitUpdaterCubit>().setUpdateModel(UpdateModel(
-      isUpdateAvailable: _isUpdateAvailable,
-      isUpdateForced: minSupportVersion > deviceBuildVersion,
-      platform: serverVersion.platform,
-      minSupportVersion: serverVersion.minVersion,
-      latestVersion: serverVersion.latestVersion,
-      deviceVersion: deviceVersion.version,
-      downloadUrl: serverVersion.updateUrl,
-    ));
-
-    bitUpdaterGetIt<BitUpdaterCubit>().setupUpdateDialogParameters(
-        _isUpdateAvailable, allowSkip, checkBoxAvailable);
-    bitUpdaterGetIt<BitUpdaterCubit>().changeUpdateStatus(
-        dismissedVersion == latestVersion
-            ? UpdateStatus.availableButDismissed
-            : UpdateStatus.available);
-
-    return dismissedVersion == latestVersion ? false : _isUpdateAvailable;
   }
 }

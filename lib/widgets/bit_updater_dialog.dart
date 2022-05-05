@@ -6,6 +6,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:math';
+import 'dart:io';
+
+import 'package:url_launcher/url_launcher.dart';
 
 class BitUpdaterDialog extends StatefulWidget {
   BitUpdaterDialog({
@@ -62,6 +65,7 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
   bool checkBoxValue = false;
   bool allowSkip = bitUpdaterGetIt<BitUpdaterCubit>().allowSkip;
   int latestVersion = bitUpdaterGetIt<BitUpdaterCubit>().latestVersion;
+  String downloadUrl = bitUpdaterGetIt<BitUpdaterCubit>().downloadUrl;
 
   @override
   void dispose() {
@@ -130,7 +134,12 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                   setState(() {
                     _changeDialog = true;
                   });
-                  bitUpdaterGetIt<BitUpdaterService>().downloadApp();
+                  if (Platform.isIOS) {
+                    _launchUrl(downloadUrl);
+                  } else {
+                    bitUpdaterGetIt<BitUpdaterService>().downloadApp();
+                  }
+
                 },
                 icon: const Icon(Icons.upgrade),
                 label: Text(
@@ -275,5 +284,9 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
   _dismiss() {
     Navigator.of(context).pop();
     bitUpdaterGetIt<BitUpdaterCubit>().disposeBitUpdater();
+  }
+
+  _launchUrl(String url) async {
+    if (await launchUrl(Uri.parse(url))) throw "Could not launch $downloadUrl";
   }
 }

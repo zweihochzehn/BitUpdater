@@ -88,6 +88,7 @@ class BitUpdaterService {
     bitUpdaterGetIt<BitUpdaterCubit>().getDismissedVersionFromShared();
     await getServerVersionInfo(url);
     await getDeviceVersionInfo();
+    bitUpdaterGetIt<BitUpdaterCubit>().setDownloadUrl(serverVersion.updateUrl);
 
     bool checkBoxAvailable = true;
     bool allowSkip = true;

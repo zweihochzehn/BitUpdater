@@ -17,6 +17,7 @@ class BitUpdaterCubit extends Cubit<BitUpdaterState> {
   int latestVersion = 0;
   bool allowSkip = false;
   bool isCheckBoxAvailable = false;
+  String downloadUrl = "";
 
   void disposeBitUpdater() {
     isUpdateAvailable = false;
@@ -29,6 +30,11 @@ class BitUpdaterCubit extends Cubit<BitUpdaterState> {
     dismissedVersion = dismissedVersion;
     bitUpdaterGetIt<SharedPreferencesService>().setDismissedVersion(
         dismissedVersion);
+  }
+
+  void setDownloadUrl(String url) {
+    downloadUrl = url;
+    debugPrint("App download URL: $url");
   }
 
   void getDismissedVersionFromShared() {

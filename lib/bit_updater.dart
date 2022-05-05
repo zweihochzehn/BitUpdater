@@ -1,5 +1,6 @@
 library bit_updater;
 
+import 'package:bit_updater/models/update_model.dart';
 import 'package:bit_updater/services/bit_updater_service.dart';
 import 'package:bit_updater/services/locator_service.dart';
 import 'package:bit_updater/services/shared_preferences_service.dart';
@@ -56,7 +57,7 @@ class BitUpdater {
     this.dialogInsetPadding,
   });
 
-  Future<bool> checkServerForUpdate() async {
+  Future<bool> checkServerForUpdateAndShowDialog() async {
     bool isUpdateAvailable = await bitUpdaterGetIt<BitUpdaterService>()
         .checkServerUpdate(url, context);
     bool allowSkip = bitUpdaterGetIt<BitUpdaterCubit>().allowSkip;
@@ -103,5 +104,11 @@ class BitUpdater {
     } else {
       return false;
     }
+  }
+
+  Future<UpdateModel> checkServerForUpdate() async {
+    bool isUpdateAvailable = await bitUpdaterGetIt<BitUpdaterService>()
+        .checkServerUpdate(url, context);
+    return bitUpdaterGetIt<BitUpdaterCubit>().updateModel;
   }
 }

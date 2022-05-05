@@ -1,3 +1,4 @@
+import 'package:bit_updater/models/update_model.dart';
 import 'package:bit_updater/services/locator_service.dart';
 import 'package:bit_updater/services/shared_preferences_service.dart';
 import 'package:bloc/bloc.dart';
@@ -18,6 +19,7 @@ class BitUpdaterCubit extends Cubit<BitUpdaterState> {
   bool allowSkip = false;
   bool isCheckBoxAvailable = false;
   String downloadUrl = "";
+  UpdateModel updateModel = UpdateModel(isUpdateAvailable: false);
 
   void disposeBitUpdater() {
     isUpdateAvailable = false;
@@ -30,6 +32,10 @@ class BitUpdaterCubit extends Cubit<BitUpdaterState> {
     dismissedVersion = dismissedVersion;
     bitUpdaterGetIt<SharedPreferencesService>().setDismissedVersion(
         dismissedVersion);
+  }
+
+  void setUpdateModel(UpdateModel model) {
+    updateModel = model;
   }
 
   void setDownloadUrl(String url) {

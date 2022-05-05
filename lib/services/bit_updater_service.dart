@@ -5,6 +5,7 @@ import 'package:bit_updater/const/enums.dart';
 import 'package:bit_updater/cubit/bit_updater_cubit.dart';
 import 'package:bit_updater/models/device_version_model.dart';
 import 'package:bit_updater/models/server_version_model.dart';
+import 'package:bit_updater/models/update_model.dart';
 import 'package:bit_updater/services/locator_service.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
@@ -15,12 +16,9 @@ import 'package:path_provider/path_provider.dart';
 
 class BitUpdaterService {
   ServerVersionModel serverVersion = ServerVersionModel(
-      minVersion: "",
-      updateUrl: "",
-      platform: "",
-      latestVersion: "");
+      minVersion: "", updateUrl: "", platform: "", latestVersion: "");
   DeviceVersionModel deviceVersion =
-  DeviceVersionModel(version: "", buildNumber: "");
+      DeviceVersionModel(version: "", buildNumber: "");
   var token = CancelToken();
 
   /// Get the apps versioning info from server and create a ServerVersionModel object.
@@ -68,9 +66,8 @@ class BitUpdaterService {
           }
         },
         deleteOnError: true,
-      ).whenComplete(() =>
-          bitUpdaterGetIt<BitUpdaterCubit>()
-              .changeUpdateStatus(UpdateStatus.completed));
+      ).whenComplete(() => bitUpdaterGetIt<BitUpdaterCubit>()
+          .changeUpdateStatus(UpdateStatus.completed));
     } catch (error) {
       if (error is DioError) {
         bitUpdaterGetIt<BitUpdaterCubit>()
@@ -84,10 +81,9 @@ class BitUpdaterService {
     }
   }
 
-  Future<bool> checkServerUpdate(String url,
-      BuildContext context) async {
-    bitUpdaterGetIt<BitUpdaterCubit>().changeUpdateStatus(
-        UpdateStatus.checking);
+  Future<bool> checkServerUpdate(String url, BuildContext context) async {
+    bitUpdaterGetIt<BitUpdaterCubit>()
+        .changeUpdateStatus(UpdateStatus.checking);
     bitUpdaterGetIt<BitUpdaterCubit>().getDismissedVersionFromShared();
     await getServerVersionInfo(url);
     await getDeviceVersionInfo();
@@ -98,12 +94,12 @@ class BitUpdaterService {
     int dismissedVersion = bitUpdaterGetIt<BitUpdaterCubit>().dismissedVersion;
     bool _isUpdateAvailable = false;
 
-    int minSupportVersion = int.parse(
-        serverVersion.minVersion.replaceAll(".", ""));
-    int latestVersion = int.parse(
-        serverVersion.latestVersion.replaceAll(".", ""));
-    int deviceBuildVersion = int.parse(
-        deviceVersion.version.replaceAll(".", ""));
+    int minSupportVersion =
+        int.parse(serverVersion.minVersion.replaceAll(".", ""));
+    int latestVersion =
+        int.parse(serverVersion.latestVersion.replaceAll(".", ""));
+    int deviceBuildVersion =
+        int.parse(deviceVersion.version.replaceAll(".", ""));
 
     /// If the dismiss checkbox ticked in dialog, this value is saved to shared.
     bitUpdaterGetIt<BitUpdaterCubit>().setLatestVersion(latestVersion);
@@ -113,9 +109,6 @@ class BitUpdaterService {
       checkBoxAvailable = false;
       allowSkip = false;
       _isUpdateAvailable = true;
-    } else if (dismissedVersion == latestVersion) {
-      _isUpdateAvailable = false;
-      //  return false;
     } else if (deviceBuildVersion < latestVersion &&
         dismissedVersion != latestVersion) {
       checkBoxAvailable = true;
@@ -125,6 +118,16 @@ class BitUpdaterService {
       _isUpdateAvailable = false;
     }
 
+    bitUpdaterGetIt<BitUpdaterCubit>().setUpdateModel(UpdateModel(
+      isUpdateAvailable: _isUpdateAvailable,
+      isUpdateForced: minSupportVersion > deviceBuildVersion,
+      platform: serverVersion.platform,
+      minSupportVersion: serverVersion.minVersion,
+      latestVersion: serverVersion.latestVersion,
+      deviceVersion: deviceVersion.version,
+      downloadUrl: serverVersion.updateUrl,
+    ));
+
     bitUpdaterGetIt<BitUpdaterCubit>().setupUpdateDialogParameters(
         _isUpdateAvailable, allowSkip, checkBoxAvailable);
     bitUpdaterGetIt<BitUpdaterCubit>().changeUpdateStatus(
@@ -132,6 +135,6 @@ class BitUpdaterService {
             ? UpdateStatus.availableButDismissed
             : UpdateStatus.available);
 
-    return _isUpdateAvailable;
+    return dismissedVersion == latestVersion ? false : _isUpdateAvailable;
   }
 }

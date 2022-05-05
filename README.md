@@ -16,18 +16,13 @@ App needs to be initialized on app startup with BitUpdaterInit().
 
 Just call BitUpdater() with required and optional parameters and you are done.
 
-## Additional information
-
-The package is still in WIP. 
-
 ## Configuration
 
-# Dependencies
+### Dependencies
 
-Add to pubspec.yaml
-url_launcher
+Add url_launcher package to pubspec.yaml
 
-# iOS
+### iOS
 
 Add any URL schemes passed to canLaunchUrl as LSApplicationQueriesSchemes entries in your Info.plist file.
 
@@ -40,7 +35,7 @@ Example:
 </array>
 ```
 
-# Android
+### Android
 
 Starting from API 30 Android requires package visibility configuration 
 in your AndroidManifest.xml.

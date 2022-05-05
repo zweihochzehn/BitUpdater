@@ -22,6 +22,11 @@ The package is still in WIP.
 
 ## Configuration
 
+# Dependencies
+
+Add to pubspec.yaml
+url_launcher
+
 # iOS
 
 Add any URL schemes passed to canLaunchUrl as LSApplicationQueriesSchemes entries in your Info.plist file.

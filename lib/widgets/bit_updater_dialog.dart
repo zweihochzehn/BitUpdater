@@ -139,7 +139,6 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                   } else {
                     bitUpdaterGetIt<BitUpdaterService>().downloadApp();
                   }
-
                 },
                 icon: const Icon(Icons.upgrade),
                 label: Text(
@@ -157,6 +156,12 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                     widget.cancelButtonText,
                     style: TextStyle(color: widget.dialogTextColor),
                   ),
+                ),
+              if (!allowSkip)
+                OutlinedButton.icon(
+                  onPressed: () => exit(1),
+                  icon: const Icon(Icons.logout),
+                  label: const Text("Exit"),
                 ),
             ],
           ),
@@ -261,11 +266,11 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
           side: BorderSide(color: widget.dialogTextColor ?? Colors.black),
           value: checkBoxValue,
           onChanged: (bool? value) {
-
             setState(() {
               checkBoxValue = value!;
             });
-            bitUpdaterGetIt<BitUpdaterCubit>().setDismissedVersion(value! ? latestVersion : 0);
+            bitUpdaterGetIt<BitUpdaterCubit>()
+                .setDismissedVersion(value! ? latestVersion : 0);
           },
         ),
       ],

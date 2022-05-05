@@ -124,9 +124,12 @@ class BitUpdater {
 
   Widget _buildErrorDialog(String errorMessage) {
     return Dialog(
-      child: Text(
-        errorMessage,
-        textAlign: TextAlign.center,
+      child: Padding(
+        padding: const EdgeInsets.all(14.0),
+        child: Text(
+          errorMessage,
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }

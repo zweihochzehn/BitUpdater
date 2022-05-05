@@ -8,8 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:math';
 import 'dart:io';
 
-import 'package:url_launcher/url_launcher.dart';
-
 class BitUpdaterDialog extends StatefulWidget {
   BitUpdaterDialog({
     Key? key,

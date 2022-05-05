@@ -26,11 +26,15 @@ class BitUpdaterService {
   /// Get the apps versioning info from server and create a ServerVersionModel object.
   Future<void> getServerVersionInfo(String url) async {
     String _endpoint = Platform.isAndroid ? "android" : "ios";
-    var response = await http.get(Uri.parse(url + _endpoint), headers: {"Accept": "application/json", "Content-Type": "application/json"});
+    var response = await http.get(Uri.parse(url + _endpoint), headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    });
 
     ///TODO: Make sure that the server versioning includes major minor and patch versioning as 3.0.0
     serverVersion = ServerVersionModel.fromJson(jsonDecode(response.body));
   }
+
   /// Get device info from packageInfo package and create a DeviceVersionModel object.
   Future<void> getDeviceVersionInfo() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -39,7 +43,6 @@ class BitUpdaterService {
 
     deviceVersion =
         DeviceVersionModel(version: version, buildNumber: buildNumber);
-
   }
 
   Future<void> downloadApp() async {
@@ -95,9 +98,12 @@ class BitUpdaterService {
     int dismissedVersion = bitUpdaterGetIt<BitUpdaterCubit>().dismissedVersion;
     bool _isUpdateAvailable = false;
 
-    int minSupportVersion = int.parse(serverVersion.minVersion.replaceAll(".", ""));
-    int latestVersion = int.parse(serverVersion.latestVersion.replaceAll(".", ""));
-    int deviceBuildVersion = int.parse(deviceVersion.version.replaceAll(".", ""));
+    int minSupportVersion = int.parse(
+        serverVersion.minVersion.replaceAll(".", ""));
+    int latestVersion = int.parse(
+        serverVersion.latestVersion.replaceAll(".", ""));
+    int deviceBuildVersion = int.parse(
+        deviceVersion.version.replaceAll(".", ""));
 
     /// If the dismiss checkbox ticked in dialog, this value is saved to shared.
     bitUpdaterGetIt<BitUpdaterCubit>().setLatestVersion(latestVersion);
@@ -108,9 +114,10 @@ class BitUpdaterService {
       allowSkip = false;
       _isUpdateAvailable = true;
     } else if (dismissedVersion == latestVersion) {
-      _isUpdateAvailable = true;
-      return false;
-    } else if (deviceBuildVersion < latestVersion) {
+      _isUpdateAvailable = false;
+      //  return false;
+    } else if (deviceBuildVersion < latestVersion &&
+        dismissedVersion != latestVersion) {
       checkBoxAvailable = true;
       allowSkip = true;
       _isUpdateAvailable = true;
@@ -118,14 +125,13 @@ class BitUpdaterService {
       _isUpdateAvailable = false;
     }
 
-    if (_isUpdateAvailable) {
-      bitUpdaterGetIt<BitUpdaterCubit>().setupUpdateDialogParameters(
-          _isUpdateAvailable, allowSkip, checkBoxAvailable);
-      bitUpdaterGetIt<BitUpdaterCubit>().changeUpdateStatus(
-          dismissedVersion == latestVersion
-              ? UpdateStatus.availableButDismissed
-              : UpdateStatus.available);
-    }
+    bitUpdaterGetIt<BitUpdaterCubit>().setupUpdateDialogParameters(
+        _isUpdateAvailable, allowSkip, checkBoxAvailable);
+    bitUpdaterGetIt<BitUpdaterCubit>().changeUpdateStatus(
+        dismissedVersion == latestVersion
+            ? UpdateStatus.availableButDismissed
+            : UpdateStatus.available);
+
     return _isUpdateAvailable;
   }
 }

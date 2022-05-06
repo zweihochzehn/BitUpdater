@@ -131,7 +131,7 @@ class BitUpdaterService {
               ? UpdateStatus.availableButDismissed
               : UpdateStatus.available);
 
-      return dismissedVersion == latestVersion ? false : _isUpdateAvailable;
+      return _isUpdateAvailable;
     } catch (error) {
       bitUpdaterGetIt<BitUpdaterCubit>().setError(FlutterError(
           "Wrong versioning info from server. \n"

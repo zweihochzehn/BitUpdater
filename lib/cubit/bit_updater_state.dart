@@ -19,18 +19,6 @@ class UpdateStatusState extends BitUpdaterState {
   List<Object?> get props => [currentStatus];
 }
 
-class UpdateDialogParameterState extends BitUpdaterState {
-  final bool isUpdateAvailable;
-  final bool allowSkip;
-  final int dismissedVersion;
-  final bool isCheckBoxAvailable;
-
-  const UpdateDialogParameterState(this.isUpdateAvailable, this.allowSkip, this.dismissedVersion, this.isCheckBoxAvailable);
-
-  @override
-  List<Object?> get props => [isUpdateAvailable, allowSkip, dismissedVersion, isCheckBoxAvailable];
-}
-
 class LoadingState extends BitUpdaterState {
   @override
   List<Object?> get props => [];

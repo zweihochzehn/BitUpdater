@@ -93,15 +93,12 @@ class BitUpdaterService {
         .changeUpdateStatus(UpdateStatus.checking);
     bitUpdaterGetIt<BitUpdaterCubit>().getDismissedVersionFromShared();
 
+    int dismissedVersion = bitUpdaterGetIt<BitUpdaterCubit>().dismissedVersion;
+    bool _isUpdateAvailable = false;
+
     await getServerVersionInfo(url);
 
     await getDeviceVersionInfo();
-    bitUpdaterGetIt<BitUpdaterCubit>().setDownloadUrl(serverVersion.updateUrl);
-
-    bool checkBoxAvailable = true;
-    bool allowSkip = true;
-    int dismissedVersion = bitUpdaterGetIt<BitUpdaterCubit>().dismissedVersion;
-    bool _isUpdateAvailable = false;
 
     try {
       int minSupportVersion =
@@ -111,18 +108,9 @@ class BitUpdaterService {
       int deviceBuildVersion =
           int.parse(deviceVersion.version.replaceAll(".", ""));
 
-      /// If the dismiss checkbox ticked in dialog, this value is saved to shared.
-      bitUpdaterGetIt<BitUpdaterCubit>().setLatestVersion(latestVersion);
-
-      if (minSupportVersion > deviceBuildVersion) {
-        ///Force update
-        checkBoxAvailable = false;
-        allowSkip = false;
-        _isUpdateAvailable = true;
-      } else if (deviceBuildVersion < latestVersion &&
-          dismissedVersion != latestVersion) {
-        checkBoxAvailable = true;
-        allowSkip = true;
+      if (minSupportVersion > deviceBuildVersion ||
+          (deviceBuildVersion < latestVersion &&
+              dismissedVersion != latestVersion)) {
         _isUpdateAvailable = true;
       } else {
         _isUpdateAvailable = false;
@@ -138,8 +126,6 @@ class BitUpdaterService {
         downloadUrl: serverVersion.updateUrl,
       ));
 
-      bitUpdaterGetIt<BitUpdaterCubit>().setupUpdateDialogParameters(
-          _isUpdateAvailable, allowSkip, checkBoxAvailable);
       bitUpdaterGetIt<BitUpdaterCubit>().changeUpdateStatus(
           dismissedVersion == latestVersion
               ? UpdateStatus.availableButDismissed

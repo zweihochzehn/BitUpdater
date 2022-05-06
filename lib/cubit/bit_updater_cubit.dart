@@ -13,61 +13,31 @@ class BitUpdaterCubit extends Cubit<BitUpdaterState> {
   BitUpdaterCubit() : super(BitUpdaterInitial());
 
   UpdateStatus updateStatus = UpdateStatus.pending;
-  bool isUpdateAvailable = false;
   int dismissedVersion = 0;
-  int latestVersion = 0;
-  bool allowSkip = false;
-  bool isCheckBoxAvailable = false;
-  String downloadUrl = "";
   UpdateModel updateModel = UpdateModel(isUpdateAvailable: false);
   FlutterError? error;
 
   void disposeBitUpdater() {
-    isUpdateAvailable = false;
-    dismissedVersion = 0;
-    latestVersion = 0;
-    allowSkip = false;
-    isCheckBoxAvailable = false;
-    downloadUrl = "";
-    dismissedVersion = 0;
     updateModel = UpdateModel(isUpdateAvailable: false);
+    dismissedVersion = 0;
     error = null;
   }
-
-  void setDismissedVersion(int dismissedVersion) {
-    dismissedVersion = dismissedVersion;
+  /// When the checkbox is ticked, we save the version user dismissed to sharedPrefs.
+  void setDismissedVersion(int version) {
+    dismissedVersion = version;
     bitUpdaterGetIt<SharedPreferencesService>().setDismissedVersion(
         dismissedVersion);
   }
-
+  /// Gather and save update info from updater service
   void setUpdateModel(UpdateModel model) {
     updateModel = model;
   }
-
-  void setDownloadUrl(String url) {
-    downloadUrl = url;
-    debugPrint("App download URL: $url");
-  }
-
+  /// If user dismissed a version by ticking the checkbox, we restore that value here.
   void getDismissedVersionFromShared() {
     dismissedVersion =
         bitUpdaterGetIt<SharedPreferencesService>().getDismissedVersion();
   }
-  /// If the checkbox is ticked, we save this value to sharedPrefs.
-  void setLatestVersion(int version) {
-    latestVersion = version;
-  }
-  /// After the update check is complete, the values are saves with this and used by the Dialog afterwards.
-  void setupUpdateDialogParameters(bool updateAvailability, bool isSkipAllowed,
-      bool checkBoxAvailability) {
-    emit(LoadingState());
-    isUpdateAvailable = updateAvailability;
-    allowSkip = isSkipAllowed;
-    isCheckBoxAvailable = checkBoxAvailability;
 
-    emit(UpdateDialogParameterState(
-        isUpdateAvailable, allowSkip, dismissedVersion, isCheckBoxAvailable));
-  }
   /// Follows the update status for debug purposes.
   void changeUpdateStatus(UpdateStatus currentUpdateStatus) {
     emit(LoadingState());

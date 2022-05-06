@@ -6,7 +6,6 @@ import 'package:bit_updater/services/locator_service.dart';
 import 'package:bit_updater/services/shared_preferences_service.dart';
 import 'package:bit_updater/widgets/bit_updater_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'const/enums.dart';
 import 'cubit/bit_updater_cubit.dart';
@@ -61,19 +60,19 @@ class BitUpdater {
   Future<bool> checkServerForUpdateAndShowDialog() async {
     bool isUpdateAvailable = await bitUpdaterGetIt<BitUpdaterService>()
         .checkServerUpdate(url, context);
-    bool allowSkip = bitUpdaterGetIt<BitUpdaterCubit>().allowSkip;
+    bool? isUpdateForced = bitUpdaterGetIt<BitUpdaterCubit>().updateModel.isUpdateForced;
     FlutterError? error = bitUpdaterGetIt<BitUpdaterCubit>().error;
 
     if (isUpdateAvailable && error == null) {
       bool _dismissOnTouchOutside = true;
       Future<bool> _onWillPop() async =>
-          allowSkip ? _dismissOnTouchOutside : allowSkip;
+          isUpdateForced! ? _dismissOnTouchOutside : isUpdateForced;
 
       Widget _buildDialogUI() {
         return BitUpdaterDialog(
           context: context,
           titleText: titleText!,
-          contentText: allowSkip ? contentText! : forceUpdateContentText!,
+          contentText: isUpdateForced! ? contentText! : forceUpdateContentText!,
           confirmButtonText: confirmText!,
           cancelButtonText: cancelText!,
           downloadUrl: url,
@@ -92,7 +91,7 @@ class BitUpdater {
 
       showDialog(
           context: context,
-          barrierDismissible: allowSkip,
+          barrierDismissible: isUpdateForced!,
           builder: (_) {
             return WillPopScope(
               onWillPop: _onWillPop,

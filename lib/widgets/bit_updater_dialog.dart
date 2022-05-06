@@ -10,6 +10,8 @@ import 'dart:io';
 
 import 'package:url_launcher/url_launcher.dart';
 
+import '../models/update_model.dart';
+
 class BitUpdaterDialog extends StatefulWidget {
   BitUpdaterDialog({
     Key? key,
@@ -59,13 +61,9 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
 
   bool _changeDialog = false;
   var token = CancelToken();
-
-  bool isCheckBoxAvailable =
-      bitUpdaterGetIt<BitUpdaterCubit>().isCheckBoxAvailable;
   bool checkBoxValue = false;
-  bool allowSkip = bitUpdaterGetIt<BitUpdaterCubit>().allowSkip;
-  int latestVersion = bitUpdaterGetIt<BitUpdaterCubit>().latestVersion;
-  String downloadUrl = bitUpdaterGetIt<BitUpdaterCubit>().downloadUrl;
+
+  UpdateModel updateModel = bitUpdaterGetIt<BitUpdaterCubit>().updateModel;
 
   @override
   void dispose() {
@@ -125,7 +123,7 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
           const SizedBox(
             height: 18,
           ),
-          if (isCheckBoxAvailable) ...[_buildCheckBox()],
+          if (!updateModel.isUpdateForced!) ...[_buildCheckBox()],
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -135,8 +133,9 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                     _changeDialog = true;
                   });
                   if (Platform.isIOS) {
-                    _launchUrl(downloadUrl);
+                    _launchUrl(updateModel.downloadUrl!);
                   } else {
+                    bitUpdaterGetIt<BitUpdaterCubit>().changeUpdateStatus(UpdateStatus.pending);
                     bitUpdaterGetIt<BitUpdaterService>().downloadApp();
                   }
                 },
@@ -146,9 +145,10 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                   style: TextStyle(color: widget.dialogTextColor),
                 ),
               ),
-              if (allowSkip)
+              if (!updateModel.isUpdateForced!)
                 OutlinedButton.icon(
                   onPressed: () {
+                    bitUpdaterGetIt<BitUpdaterCubit>().changeUpdateStatus(UpdateStatus.dialogDismissed);
                     _dismiss();
                   },
                   icon: const Icon(Icons.cancel),
@@ -157,7 +157,7 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                     style: TextStyle(color: widget.dialogTextColor),
                   ),
                 ),
-              if (!allowSkip)
+              if (updateModel.isUpdateForced!)
                 OutlinedButton.icon(
                   onPressed: () => exit(1),
                   icon: const Icon(Icons.logout),
@@ -270,7 +270,7 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
               checkBoxValue = value!;
             });
             bitUpdaterGetIt<BitUpdaterCubit>()
-                .setDismissedVersion(value! ? latestVersion : 0);
+                .setDismissedVersion(value! ? int.parse(updateModel.latestVersion!.replaceAll(".", "")) : 0);
           },
         ),
       ],
@@ -292,6 +292,6 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
   }
 
   _launchUrl(String url) async {
-    if (await launchUrl(Uri.parse(url))) throw "Could not launch $downloadUrl";
+    if (await launchUrl(Uri.parse(url))) throw "Could not launch ${updateModel.downloadUrl}";
   }
 }

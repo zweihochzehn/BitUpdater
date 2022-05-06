@@ -135,7 +135,8 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                   if (Platform.isIOS) {
                     _launchUrl(updateModel.downloadUrl!);
                   } else {
-                    bitUpdaterGetIt<BitUpdaterCubit>().changeUpdateStatus(UpdateStatus.pending);
+                    bitUpdaterGetIt<BitUpdaterCubit>()
+                        .changeUpdateStatus(UpdateStatus.pending);
                     bitUpdaterGetIt<BitUpdaterService>().downloadApp();
                   }
                 },
@@ -148,7 +149,8 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
               if (!updateModel.isUpdateForced!)
                 OutlinedButton.icon(
                   onPressed: () {
-                    bitUpdaterGetIt<BitUpdaterCubit>().changeUpdateStatus(UpdateStatus.dialogDismissed);
+                    bitUpdaterGetIt<BitUpdaterCubit>()
+                        .changeUpdateStatus(UpdateStatus.dialogDismissed);
                     _dismiss();
                   },
                   icon: const Icon(Icons.cancel),
@@ -240,7 +242,10 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                     },
                     padding: const EdgeInsets.all(6),
                     constraints: const BoxConstraints(),
-                    icon: const Icon(Icons.clear_rounded),
+                    icon: Icon(
+                      Icons.clear_rounded,
+                      color: widget.dialogTextColor,
+                    ),
                   ),
                 ],
               ),
@@ -269,8 +274,9 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
             setState(() {
               checkBoxValue = value!;
             });
-            bitUpdaterGetIt<BitUpdaterCubit>()
-                .setDismissedVersion(value! ? int.parse(updateModel.latestVersion!.replaceAll(".", "")) : 0);
+            bitUpdaterGetIt<BitUpdaterCubit>().setDismissedVersion(value!
+                ? int.parse(updateModel.latestVersion!.replaceAll(".", ""))
+                : 0);
           },
         ),
       ],
@@ -292,6 +298,7 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
   }
 
   _launchUrl(String url) async {
-    if (await launchUrl(Uri.parse(url))) throw "Could not launch ${updateModel.downloadUrl}";
+    if (await launchUrl(Uri.parse(url)))
+      throw "Could not launch ${updateModel.downloadUrl}";
   }
 }

@@ -108,8 +108,7 @@ class BitUpdaterService {
       int deviceBuildVersion =
           int.parse(deviceVersion.version.replaceAll(".", ""));
 
-      if (minSupportVersion > deviceBuildVersion ||
-          (deviceBuildVersion < latestVersion &&
+      if (minSupportVersion > deviceBuildVersion || (deviceBuildVersion < latestVersion &&
               dismissedVersion != latestVersion)) {
         _isUpdateAvailable = true;
       }
@@ -127,11 +126,11 @@ class BitUpdaterService {
       bitUpdaterGetIt<BitUpdaterCubit>().setUpdateModel(updateModel);
 
       bitUpdaterGetIt<BitUpdaterCubit>().changeUpdateStatus(
-          (dismissedVersion == latestVersion && !updateModel.isUpdateForced)
+          (dismissedVersion == latestVersion && !updateModel.isUpdateForced!)
               ? UpdateStatus.availableButDismissed
               : UpdateStatus.available);
 
-      return updateModel.isUpdateForced ? true : _isUpdateAvailable;
+      return updateModel.isUpdateForced! ? true : _isUpdateAvailable;
     } catch (error) {
       bitUpdaterGetIt<BitUpdaterCubit>().setError(FlutterError(
           "Wrong versioning info from server. \n"

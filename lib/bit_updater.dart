@@ -64,9 +64,8 @@ class BitUpdater {
     FlutterError? error = bitUpdaterGetIt<BitUpdaterCubit>().error;
 
     if (isUpdateAvailable && error == null) {
-      bool _dismissOnTouchOutside = true;
       Future<bool> _onWillPop() async =>
-          isUpdateForced! ? _dismissOnTouchOutside : isUpdateForced;
+          !isUpdateForced!;
 
       Widget _buildDialogUI() {
         return BitUpdaterDialog(
@@ -91,7 +90,7 @@ class BitUpdater {
 
       showDialog(
           context: context,
-          barrierDismissible: isUpdateForced!,
+          barrierDismissible: !isUpdateForced!,
           builder: (_) {
             return WillPopScope(
               onWillPop: _onWillPop,

@@ -50,6 +50,14 @@ class BitUpdaterService {
         DeviceVersionModel(version: version, buildNumber: buildNumber);
   }
 
+  bool checkUrlFormat(String url) {
+    if (url.startsWith('http') && url.endsWith("/")) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Future<void> downloadApp() async {
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;
@@ -89,6 +97,12 @@ class BitUpdaterService {
   }
 
   Future<bool> checkServerUpdate(String url, BuildContext context) async {
+    if (!checkUrlFormat(url)) {
+      bitUpdaterGetIt<BitUpdaterCubit>()
+          .changeUpdateStatus(UpdateStatus.urlNotValid);
+      debugPrint("The given URL is not valid. Please make sure you follow the correct URL scheme and your URL starts with 'http' and ends with '/'");
+      return false;
+    }
     bitUpdaterGetIt<BitUpdaterCubit>()
         .changeUpdateStatus(UpdateStatus.checking);
     bitUpdaterGetIt<BitUpdaterCubit>().getDismissedVersionFromShared();
@@ -108,7 +122,8 @@ class BitUpdaterService {
       int deviceBuildVersion =
           int.parse(deviceVersion.version.replaceAll(".", ""));
 
-      if (minSupportVersion > deviceBuildVersion || (deviceBuildVersion < latestVersion &&
+      if (minSupportVersion > deviceBuildVersion ||
+          (deviceBuildVersion < latestVersion &&
               dismissedVersion != latestVersion)) {
         _isUpdateAvailable = true;
       }

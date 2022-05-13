@@ -25,4 +25,7 @@ enum UpdateStatus {
 
   ///when there is an error that stopped the update to download
   failed,
+
+  ///if the URL given is unvalid
+  urlNotValid,
 }

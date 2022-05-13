@@ -13,17 +13,30 @@ An updater package for updating flutter apps
 App needs to be initialized on app startup with BitUpdaterInit().
 
 ## Usage
+The URL passed to the BitUpdater has to start with 'http' and end with '/', otherwise you will get an error.
+The package checks the device platform and adds 'android', 'ios' or 'web' as endpoint to the URL so do not include the endpoint in the URL.
 
-Just call BitUpdater() with required and optional parameters and you are done.
-BitUpdater().checkServerForUpdateAndShowDialog() if you want to show an update dialog.
+Json Structure:
+
+{
+"minVersion": "2.2.1",
+"latestVersion": "3.0.3",
+"updateUrl": "https://bitrise.io/1234",
+"platform": "ANDROID",
+}
+
+Make sure that the versioning for latestVersion and minVersion includes major, minor and patch versioning like in the example.
+
+Afterwards just call BitUpdater() with required and optional parameters and you are done.
+Call BitUpdater().checkServerForUpdateAndShowDialog() if you want to show an update dialog.
 If you need the flexibility then just call BitUpdater().checkServerForUpdate() which returns an UpdateModel
-object that has all the info you need, to build your own widgets.
+object that has all the info you need to build your own widgets.
 
 ## Configuration
 
 ### Dependencies
 
-Add url_launcher package to pubspec.yaml
+Add url_launcher and get_it  packages to pubspec.yaml
 
 ### iOS
 

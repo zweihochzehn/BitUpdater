@@ -2,6 +2,8 @@ import 'package:bit_updater/cubit/bit_updater_cubit.dart';
 import 'package:bit_updater/services/locator_service.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/global.dart';
+
 class ServerVersionModel {
   ServerVersionModel({
     required this.minVersion,
@@ -17,10 +19,10 @@ class ServerVersionModel {
 
   factory ServerVersionModel.fromJson(Map<String, dynamic> json) {
     ServerVersionModel serverVersionModel = ServerVersionModel(
-      minVersion: json["minVersion"] as String,
-      latestVersion: json["latestVersion"] as String,
-      updateUrl: json["updateUrl"] as String,
-      platform: json["platform"] as String,
+      minVersion: tryCast(json["minVersion"]),
+      latestVersion: tryCast(json["latestVersion"]),
+      updateUrl: tryCast(json["updateUrl"]),
+      platform: tryCast(json["platform"]),
     );
     return serverVersionModel;
   }

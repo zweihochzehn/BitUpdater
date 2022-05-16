@@ -298,7 +298,8 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
   }
 
   _launchUrl(String url) async {
-    if (await launchUrl(Uri.parse(url)))
+    if (await launchUrl(Uri.parse(url))) {
       throw "Could not launch ${updateModel.downloadUrl}";
+    }
   }
 }

@@ -1,7 +1,3 @@
-import 'package:bit_updater/cubit/bit_updater_cubit.dart';
-import 'package:bit_updater/services/locator_service.dart';
-import 'package:flutter/material.dart';
-
 import '../utils/global.dart';
 
 class ServerVersionModel {

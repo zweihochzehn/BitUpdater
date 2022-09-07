@@ -71,7 +71,7 @@ class BitUpdater {
         return BitUpdaterDialog(
           context: context,
           titleText: titleText!,
-          contentText: isUpdateForced! ? contentText! : forceUpdateContentText!,
+          contentText: isUpdateForced! ? forceUpdateContentText! : contentText!,
           confirmButtonText: confirmText!,
           cancelButtonText: cancelText!,
           downloadUrl: url,

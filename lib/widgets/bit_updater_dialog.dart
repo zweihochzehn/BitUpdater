@@ -76,17 +76,20 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: widget.dialogShape,
-      alignment: widget.dialogAlignment,
-      backgroundColor: widget.dialogBackgroundColor,
-      elevation: widget.dialogElevation,
-      clipBehavior: widget.dialogClipBehavior ?? Clip.none,
-      insetAnimationCurve: widget.dialogInsetAnimationCurve ?? Curves.easeIn,
-      insetAnimationDuration: widget.dialogInsetAnimationDuration ??
-          const Duration(milliseconds: 100),
-      insetPadding: widget.dialogInsetPadding,
-      child: _changeDialog ? _downloadContent() : _updateContent(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Dialog(
+        shape: widget.dialogShape,
+        alignment: widget.dialogAlignment,
+        backgroundColor: widget.dialogBackgroundColor,
+        elevation: widget.dialogElevation,
+        clipBehavior: widget.dialogClipBehavior ?? Clip.none,
+        insetAnimationCurve: widget.dialogInsetAnimationCurve ?? Curves.easeIn,
+        insetAnimationDuration: widget.dialogInsetAnimationDuration ??
+            const Duration(milliseconds: 100),
+        insetPadding: widget.dialogInsetPadding,
+        child: _changeDialog ? _downloadContent() : _updateContent(),
+      ),
     );
   }
 

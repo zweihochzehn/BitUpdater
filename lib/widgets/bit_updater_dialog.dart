@@ -239,6 +239,9 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                       bitUpdaterGetIt<BitUpdaterCubit>()
                           .changeUpdateStatus(UpdateStatus.cancelled);
                       _dismiss();
+                      if (updateModel.isUpdateForced!) {
+                        exit(1);
+                      }
                     },
                     padding: const EdgeInsets.all(6),
                     constraints: const BoxConstraints(),

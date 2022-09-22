@@ -269,9 +269,11 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          widget.checkBoxText,
-          style: TextStyle(color: widget.dialogTextColor),
+        FittedBox(
+          child: Text(
+            widget.checkBoxText,
+            style: TextStyle(color: widget.dialogTextColor),
+          ),
         ),
         Checkbox(
           side: BorderSide(color: widget.dialogTextColor ?? Colors.black),

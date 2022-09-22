@@ -266,28 +266,29 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
   }
 
   Widget _buildCheckBox() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        FittedBox(
-          child: Text(
-            widget.checkBoxText,
-            style: TextStyle(color: widget.dialogTextColor),
+    return FittedBox(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+              widget.checkBoxText,
+              style: TextStyle(color: widget.dialogTextColor),
+            ),
+
+          Checkbox(
+            side: BorderSide(color: widget.dialogTextColor ?? Colors.black),
+            value: checkBoxValue,
+            onChanged: (bool? value) {
+              setState(() {
+                checkBoxValue = value!;
+              });
+              bitUpdaterGetIt<BitUpdaterCubit>().setDismissedVersion(value!
+                  ? int.parse(updateModel.latestVersion!.replaceAll(".", ""))
+                  : 0);
+            },
           ),
-        ),
-        Checkbox(
-          side: BorderSide(color: widget.dialogTextColor ?? Colors.black),
-          value: checkBoxValue,
-          onChanged: (bool? value) {
-            setState(() {
-              checkBoxValue = value!;
-            });
-            bitUpdaterGetIt<BitUpdaterCubit>().setDismissedVersion(value!
-                ? int.parse(updateModel.latestVersion!.replaceAll(".", ""))
-                : 0);
-          },
-        ),
-      ],
+        ],
+      ),
     );
   }
 

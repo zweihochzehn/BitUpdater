@@ -10,7 +10,7 @@ import 'package:bit_updater/services/locator_service.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -77,7 +77,7 @@ class BitUpdaterService {
           bitUpdaterGetIt<BitUpdaterCubit>()
               .updateDownloadProgress(progress, totalProgress);
           if (progress == totalProgress) {
-            OpenFile.open('$tempPath/app.apk');
+            OpenFilex.open('$tempPath/app.apk');
           }
         },
         deleteOnError: true,
@@ -149,7 +149,7 @@ class BitUpdaterService {
     } catch (error) {
       bitUpdaterGetIt<BitUpdaterCubit>().setError(FlutterError(
           "Wrong versioning info from server. \n"
-          "Versioning does not match. Make sure versioning is formatted with MAJOR, MINOR and PATCH. Exp: 3.0.0"));
+          "Versioning does not match. Make sure versioning is formatted with MAJOR, MINOR and PATCH. Example: 3.0.0"));
       return false;
     }
   }

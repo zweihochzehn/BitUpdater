@@ -25,7 +25,10 @@ Json Structure:
 "platform": "ANDROID",
 }
 
-Make sure that the versioning for latestVersion and minVersion includes major, minor and patch versioning like in the example.
+Make sure that the versioning for latestVersion and minVersion includes major, minor and patch versioning like in the example above.
+If the versioning is wrong, updater shows a message saying:
+"Wrong versioning info from server. Versioning does not match. Make sure versioning is formatted with MAJOR, MINOR and PATCH. Example: 3.0.0"));
+If the versions endpoint is not configured, package will throw an error with the server response but the app will continue to function as expected.
 
 Afterwards just call BitUpdater() with required and optional parameters and you are done.
 Call BitUpdater().checkServerForUpdateAndShowDialog() if you want to show an update dialog.

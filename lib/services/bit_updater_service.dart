@@ -24,12 +24,24 @@ class BitUpdaterService {
   /// Get the apps versioning info from server and create a ServerVersionModel object.
   Future<void> getServerVersionInfo(String url) async {
     String _endpoint = Platform.isAndroid ? "android" : "ios";
-    var response = await http.get(Uri.parse(url + _endpoint), headers: {
+    String _versionUrl = url + _endpoint;
+    print("Getting the version info from $_versionUrl");
+    var response = await http.get(Uri.parse(_versionUrl), headers: {
       "Accept": "application/json",
       "Content-Type": "application/json"
     });
 
-    ///TODO: Make sure that the server versioning includes major minor and patch versioning as 3.0.0
+    if (response.statusCode != 200) {
+      print("Error getting version info");
+      print("Status code: ${response.statusCode}");
+      print("Response body:");
+      print(response.body.toString());
+    } else {
+      print("Version info acquired:");
+      print(response.body);
+    }
+
+    /// Make sure that the server versioning includes major minor and patch versioning as 3.0.0
 
     serverVersion = ServerVersionModel.fromJson(jsonDecode(response.body));
     // RegExp versioningPattern = RegExp(r"\d\.\d\.\d");
@@ -43,11 +55,13 @@ class BitUpdaterService {
   /// Get device info from packageInfo package and create a DeviceVersionModel object.
   Future<void> getDeviceVersionInfo() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    bool hasBuildFlavorInVersioning = packageInfo.version.contains(" ");
     String buildNumber = packageInfo.buildNumber;
-    String version = packageInfo.version;
+    String version = hasBuildFlavorInVersioning ? packageInfo.version.split(" ")[0] : packageInfo.version;
 
     deviceVersion =
         DeviceVersionModel(version: version, buildNumber: buildNumber);
+    print("Device version: " + deviceVersion.version + " Build number: " + deviceVersion.buildNumber);
   }
 
   bool checkUrlFormat(String url) {

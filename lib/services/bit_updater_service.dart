@@ -15,6 +15,9 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 
 class BitUpdaterService {
+  final bool launchUrlInsteadOfDownloading;
+  BitUpdaterService({this.launchUrlInsteadOfDownloading = true});
+
   ServerVersionModel serverVersion = ServerVersionModel(
       minVersion: "", updateUrl: "", platform: "", latestVersion: "");
   DeviceVersionModel deviceVersion =
@@ -57,11 +60,16 @@ class BitUpdaterService {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     bool hasBuildFlavorInVersioning = packageInfo.version.contains(" ");
     String buildNumber = packageInfo.buildNumber;
-    String version = hasBuildFlavorInVersioning ? packageInfo.version.split(" ")[0] : packageInfo.version;
+    String version = hasBuildFlavorInVersioning
+        ? packageInfo.version.split(" ")[0]
+        : packageInfo.version;
 
     deviceVersion =
         DeviceVersionModel(version: version, buildNumber: buildNumber);
-    print("Device version: " + deviceVersion.version + " Build number: " + deviceVersion.buildNumber);
+    print("Device version: " +
+        deviceVersion.version +
+        " Build number: " +
+        deviceVersion.buildNumber);
   }
 
   bool checkUrlFormat(String url) {
@@ -114,7 +122,8 @@ class BitUpdaterService {
     if (!checkUrlFormat(url)) {
       bitUpdaterGetIt<BitUpdaterCubit>()
           .changeUpdateStatus(UpdateStatus.urlNotValid);
-      debugPrint("The given URL is not valid. Please make sure you follow the correct URL scheme and your URL starts with 'http' and ends with '/'");
+      debugPrint(
+          "The given URL is not valid. Please make sure you follow the correct URL scheme and your URL starts with 'http' and ends with '/'");
       return false;
     }
     bitUpdaterGetIt<BitUpdaterCubit>()

@@ -137,6 +137,9 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                   });
                   if (Platform.isIOS) {
                     _launchUrl(updateModel.downloadUrl!);
+                  } else if (bitUpdaterGetIt<BitUpdaterService>()
+                      .launchUrlInsteadOfDownloading) {
+                    _launchUrl(updateModel.downloadUrl!);
                   } else {
                     bitUpdaterGetIt<BitUpdaterCubit>()
                         .changeUpdateStatus(UpdateStatus.pending);
@@ -271,10 +274,9 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-              widget.checkBoxText,
-              style: TextStyle(color: widget.dialogTextColor),
-            ),
-
+            widget.checkBoxText,
+            style: TextStyle(color: widget.dialogTextColor),
+          ),
           Checkbox(
             side: BorderSide(color: widget.dialogTextColor ?? Colors.black),
             value: checkBoxValue,

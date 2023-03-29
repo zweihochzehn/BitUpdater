@@ -135,7 +135,6 @@ class _BitUpdaterDialogState extends State<BitUpdaterDialog> {
                   setState(() {
                     _changeDialog = true;
                   });
-                  // TODO add another check
                   if (Platform.isIOS) {
                     _launchUrl(updateModel.downloadUrl!);
                   } else if (bitUpdaterGetIt<BitUpdaterService>()

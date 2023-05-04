@@ -10,17 +10,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  bloc: ^8.1.0
-  flutter_bloc: ^8.1.1
+  bloc: ^8.1.1
+  flutter_bloc: ^8.1.2
   equatable: ^2.0.5
-  shared_preferences: ^2.0.15
-  get_it: ^7.2.0
-  dio: ^4.0.6
-  http: ^0.13.5
+  shared_preferences: ^2.1.0
+  get_it: ^7.4.0
+  dio: ^5.1.1
+  http: ^0.13.6
   open_filex: ^4.3.2
-  package_info_plus: ^3.0.2
-  path_provider: ^2.0.11
-  url_launcher: ^6.1.7
+  package_info_plus: ^3.1.2
+  path_provider: ^2.0.14
+  url_launcher: ^6.1.10
 
 dev_dependencies:
   flutter_test:
